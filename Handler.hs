@@ -36,9 +36,28 @@ import Servant.Types.SourceT (source)
 import qualified Data.Aeson.Parser
 import qualified Text.Blaze.Html
 
-type API = "position" :> Capture "x" Int :> Capture "y" Int :> Get '[JSON] Position
+
+type API = Get '[JSON] [User]
+      :<|>  "position" :> Capture "x" Int :> Capture "y" Int :> Get '[JSON] Position
       :<|> "hello" :> QueryParam "name" String :> Get '[JSON] HelloMessage
       :<|> "marketing" :> ReqBody '[JSON] ClientInfo :> Post '[JSON] Email
+--       :<|> "static" :> Raw
+
+data User = User
+  { name :: String
+  , age :: Int
+  , email :: String
+  , registration_date :: Day
+  } deriving (Eq, Show, Generic)
+
+instance ToJSON User
+
+users1 :: [User]
+users1 =
+  [ User "Isaac Newton"    372 "isaac@newton.co.uk" (fromGregorian 1683  3 1)
+  , User "Albert Einstein" 136 "ae@mc2.org"         (fromGregorian 1905 12 1)
+  ]
+
 
 data Position = Position
   { xCoord :: Int
@@ -84,7 +103,8 @@ emailForClient c = Email from' to' subject' body'
                   ++ " products? Give us a visit!"
 
 server3 :: Server API
-server3 = position
+server3 = return users1
+     :<|> position
      :<|> hello
      :<|> marketing
 
