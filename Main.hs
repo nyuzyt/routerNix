@@ -20,4 +20,4 @@ import YWai
 main :: IO ()
 main = do
     putStrLn $ "http://localhost:8080/"
-    run 8080 app2
+    run 8080 app

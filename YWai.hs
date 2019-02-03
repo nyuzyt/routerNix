@@ -7,15 +7,10 @@ import Network.HTTP.Types
 import Network.Wai.Handler.Warp (run)
 
 app :: Application
-app _ respond = do
-    putStrLn "I've done some IO here"
-    respond $ responseLBS
-        status200
-        [("Content-Type", "text/plain")]
-        "Hello, Web!"
-
-app2 :: Application
-app2 _ respond = respond index
+app request respond = respond $ case rawPathInfo request of
+    "/"     -> index
+    "/raw/" -> plainIndex
+    _       -> notFound
 
 index :: Response
 index = responseFile
@@ -23,3 +18,15 @@ index = responseFile
     [("Content-Type", "text/html")]
     "index.html"
     Nothing
+
+plainIndex :: Response
+plainIndex = responseLBS
+    status200
+    [("Content-Type", "text/plain")]
+    "Hello, Web!"
+
+notFound :: Response
+notFound = responseLBS
+    status404
+    [("Content-Type", "text/plain")]
+    "404 - Not Found"
