@@ -11,6 +11,7 @@ license:             BSD-3-Clause
 license-file:        LICENSE
 author:              nyuzyt
 maintainer:          jstzzyt01@gmail.com
+build-type:          Simple
 -- copyright:
 -- category:
 extra-source-files:  CHANGELOG.md
@@ -18,9 +19,9 @@ extra-source-files:  CHANGELOG.md
 executable routerNix
   main-is:             Main.hs
 
-  other-modules:
-                       Server
-                       Handler
+--  other-modules:
+--                       Server
+--                       Handler
   -- other-extensions:
   build-depends:
                        base < 5
