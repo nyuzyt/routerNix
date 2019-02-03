@@ -13,3 +13,13 @@ app _ respond = do
         status200
         [("Content-Type", "text/plain")]
         "Hello, Web!"
+
+app2 :: Application
+app2 _ respond = respond index
+
+index :: Response
+index = responseFile
+    status200
+    [("Content-Type", "text/html")]
+    "index.html"
+    Nothing
