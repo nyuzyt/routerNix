@@ -2,8 +2,8 @@ module Main where
 
 import Network.Wai.Handler.Warp
 
-import Server
+import Handler
 
 main :: IO ()
-main = run 8081 app1
+main = run 8081 app3
 

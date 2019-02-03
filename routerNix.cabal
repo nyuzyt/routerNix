@@ -20,6 +20,7 @@ executable routerNix
 
   other-modules:
                        Server
+                       Handler
   -- other-extensions:
   build-depends:
                        base < 5

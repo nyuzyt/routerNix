@@ -64,3 +64,27 @@ userAPI = Proxy
 -- not yet a webserver.
 app1 :: Application
 app1 = serve userAPI server1
+
+type UserAPI2 = "users" :> Get '[JSON] [User]
+           :<|> "albert" :> Get '[JSON] User
+           :<|> "isaac" :> Get '[JSON] User
+
+isaac :: User
+isaac = User "Isaac Newton" 372 "isaac@newton.co.uk" (fromGregorian 1683 3 1)
+
+albert :: User
+albert = User "Albert Einstein" 136 "ae@mc2.org" (fromGregorian 1905 12 1)
+
+users2 :: [User]
+users2 = [isaac, albert]
+
+server2 :: Server UserAPI2
+server2 = return users2
+     :<|> return albert
+     :<|> return isaac
+
+userAPI2 :: Proxy UserAPI2
+userAPI2 = Proxy
+
+app2 :: Application
+app2 = serve userAPI2 server2
