@@ -1,10 +1,18 @@
-{ mkDerivation, base, jsaddle-warp, miso, stdenv }:
+{ mkDerivation, aeson, attoparsec, base, base-compat, blaze-html
+, blaze-markup, bytestring, directory, http-media, lucid, miso, mtl
+, servant, servant-server, stdenv, string-conversions, time, wai
+, warp
+}:
 mkDerivation {
   pname = "routerNix";
   version = "0.1.0.0";
   src = ./.;
   isLibrary = false;
   isExecutable = true;
-  executableHaskellDepends = [ base jsaddle-warp miso ];
+  executableHaskellDepends = [
+    aeson attoparsec base base-compat blaze-html blaze-markup
+    bytestring directory http-media lucid miso mtl servant
+    servant-server string-conversions time wai warp
+  ];
   license = stdenv.lib.licenses.bsd3;
 }
