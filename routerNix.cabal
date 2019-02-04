@@ -20,7 +20,7 @@ executable routerNix
   main-is:             Main.hs
 
   other-modules:
-                         YWai
+--                       YWai
 --                       Server
 --                       Handler
   -- other-extensions:
