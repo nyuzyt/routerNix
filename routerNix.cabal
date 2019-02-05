@@ -56,5 +56,8 @@ cabal-version:       >=1.10
 
 executable app
   main-is:             Main.hs
-  build-depends:       base, miso
+  build-depends:       base
+                     , miso
+                     , servant
+
   default-language:    Haskell2010

@@ -10,7 +10,6 @@ module Router where
 import Data.Proxy
 import Servant.API
 import Servant.Links
-import Language.Javascript.JSaddle.Warp as JSaddle
 
 import Miso
 
@@ -21,6 +20,12 @@ data Model
     -- ^ current URI of application
   } deriving (Eq, Show)
 
+initialModel :: URI -> Model
+initialModel uri =
+    Model
+    { uri = uri
+    }
+
 -- | Action
 data Action
   = HandleURI URI
@@ -28,18 +33,9 @@ data Action
   | NoOp
   deriving (Show, Eq)
 
--- | Main entry point
-main :: IO ()
-main = do
-  JSaddle.run 8080 $ do
-    currentURI <- getCurrentURI
-    startApp App { model = Model currentURI, initialAction = NoOp, ..}
-  where
-    update = updateModel
-    events = defaultEvents
-    subs   = [ uriSub HandleURI ]
-    view   = viewModel
-    mountPoint = Nothing
+page404View :: View Action
+page404View =
+    text "Yo, 404, page unknown. Go to / or /flipped. Shoo!"
 
 -- | Update your model
 updateModel :: Action -> Model -> Effect Action Model

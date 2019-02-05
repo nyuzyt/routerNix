@@ -25,27 +25,110 @@
 -- ####################################
 
 -- miso sample
--- | Haskell language pragma
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
+-- -- | Haskell language pragma
+-- {-# LANGUAGE OverloadedStrings #-}
+-- {-# LANGUAGE RecordWildCards #-}
+--
+-- -- | Haskell module declaration
+-- module Main where
+--
+-- -- | Miso framework import
+-- import Miso
+-- import Miso.String
+--
+-- import Sample
+--
+-- -- | Entry point for a miso application
+-- main :: IO ()
+-- main = startApp App {..}
+--   where
+--     initialAction = SayHelloWorld -- initial action to be executed on application load
+--     model  = 0                    -- initial model
+--     update = updateModel          -- update function
+--     view   = viewModel            -- view function
+--     events = defaultEvents        -- default delegated events
+--     subs   = []                   -- empty subscription list
+--     mountPoint = Nothing          -- mount point for application (Nothing defaults to 'body')
 
--- | Haskell module declaration
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE CPP #-}
 module Main where
 
--- | Miso framework import
+import Data.Proxy
+import Servant.API
+import Servant.Links
+import Servant.Server.Internal.Handler
+
 import Miso
-import Miso.String
 
-import Sample
+import Router
 
--- | Entry point for a miso application
+-- | Main entry point
 main :: IO ()
-main = startApp App {..}
+main = do
+  IO.hPutStrLn IO.stderr ("Running on port " ++ show port ++ "...")
+  run port $ logStdout (compress app)
+ where
+  port     = 3001 :: Port
+  compress = gzip def { gzipFiles = GzipCompress }
+
+app :: Application
+app = serve
+  (Proxy @ServerAPI)
+  (    static
+  :<|> serverHandlers
+  :<|> Tagged page404
+  )
   where
-    initialAction = SayHelloWorld -- initial action to be executed on application load
-    model  = 0                    -- initial model
-    update = updateModel          -- update function
-    view   = viewModel            -- view function
-    events = defaultEvents        -- default delegated events
-    subs   = []                   -- empty subscription list
-    mountPoint = Nothing          -- mount point for application (Nothing defaults to 'body')
+    static :: Server StaticAPI
+    static = serveDirectoryFileServer "static"
+
+    serverHandlers :: Server ServerRoutes
+    serverHandlers = homeServer :<|> aboutServer
+
+    -- Alternative type:
+    -- Servant.Server (ToServerRoutes Common.Home HtmlPage Common.Action)
+    -- Handles the route for the home page, rendering Common.homeView.
+    homeServer :: Handler (HtmlPage (View Router.Action))
+    homeServer =
+        pure $ HtmlPage $
+          Common.viewModel $
+          Common.initialModel Common.homeLink
+
+    -- Alternative type:
+    -- Servant.Server (ToServerRoutes Common.Flipped HtmlPage Common.Action)
+    -- Renders the /flipped page.
+    flippedServer :: Servant.Handler (HtmlPage (View Common.Action))
+    flippedServer =
+        pure $ HtmlPage $
+          Common.viewModel $
+          Common.initialModel Common.flippedLink
+
+    -- The 404 page is a Wai application because the endpoint is Raw.
+    -- It just renders the page404View and sends it to the client.
+    page404 :: Wai.Application
+    page404 _ respond = respond $ Wai.responseLBS
+        HTTP.status404 [("Content-Type", "text/html")] $
+        L.renderBS $ L.toHtml Common.page404View
+
+type ServerAPI =
+       StaticAPI
+  :<|> (ServerRoutes
+  :<|> Raw) -- This will show the 404 page for any unknown route
+
+type StaticAPI = "static" :> Servant.Raw
+
+type ServerRoutes
+   = Miso.ToServerRoutes Common.ViewRoutes HtmlPage Common.Action
+
+
+homeHandlers :: Handler (Wrapper (View Action))
+homeHandlers = goHome
+
+aboutHandler :: Handler (Wrapper (View Action))
+aboutHandler = goAbout
