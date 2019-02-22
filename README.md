@@ -62,7 +62,7 @@ f ( g x ) = (f . g) x
             :<|> Tagged page404
             )
     ```
-    1. routes: static routes and serverRoutes
+    1. routes: static routes, serverRoutes and Raw
 
         ```haskell
         -- The server serves static files besides the ServerRoutes, among which is the

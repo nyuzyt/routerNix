@@ -44,13 +44,15 @@ data Action
   deriving (Show, Eq)
 
 -- Holds a servant route tree of `View action`
-type ViewRoutes = Home :<|> Flipped
+type ViewRoutes = Home :<|> Flipped :<|> Login
 
 -- Home route, contains two buttons and a field
 type Home = View Action
 
 -- Flipped route, same as Home, but with the buttons flipped
 type Flipped = "flipped" :> View Action
+
+type Login = "login" :> View Action
 
 makeLenses ''Model
 
@@ -61,12 +63,9 @@ viewModel m =
       Left _routingError -> page404View
       Right v -> v
 
--- Servant tree of view functions
--- Should follow the structure of ViewRoutes
-viewTree
-    ::      (Model -> View Action)
-       :<|> (Model -> View Action)
-viewTree = homeView :<|> flippedView
+-- -- Servant tree of view functions
+-- -- Should follow the structure of ViewRoutes
+viewTree = homeView :<|> flippedView :<|> loginView
 
 -- View function of the Home route
 homeView :: Model -> View Action
@@ -81,7 +80,7 @@ homeView m =
       , button_ [ onClick $ ChangeURI flippedLink ] [ text "Go to /flipped" ]
       ]
 
--- View function of the Home route
+-- View function of the Flipped route
 flippedView :: Model -> View Action
 flippedView m =
     div_ []
@@ -92,6 +91,19 @@ flippedView m =
         , button_ [ onClick SubtractOne ] [ text "-" ]
         ]
       , button_ [ onClick $ ChangeURI homeLink ] [ text "Go to /" ]
+      ]
+
+-- View function of the Login route
+loginView :: Model -> View Action
+loginView m =
+    div_ []
+      [ h1_ [] [text "Login!"]
+      , form_ [method_ "post", action_ "/login"]
+        [
+          input_ [type_ "text", name_ "username", placeholder_ "username"]
+          , input_ [type_ "password", name_ "password", placeholder_ "password"]
+          , input_ [type_ "submit", value_ "Login"]
+        ]
       ]
 
 page404View :: View Action
@@ -114,4 +126,13 @@ flippedLink =
     Servant.linkURI $ Servant.safeLink (Proxy @ViewRoutes) (Proxy @Flipped)
 #else
     safeLink (Proxy @ViewRoutes) (Proxy @Flipped)
+#endif
+
+-- Network.URI that points to the flipped route
+loginLink :: Network.URI
+loginLink =
+#if MIN_VERSION_servant(0,10,0)
+    Servant.linkURI $ Servant.safeLink (Proxy @ViewRoutes) (Proxy @Login)
+#else
+    safeLink (Proxy @ViewRoutes) (Proxy @Login)
 #endif
