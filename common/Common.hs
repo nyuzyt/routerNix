@@ -16,6 +16,7 @@ import qualified Servant.Links as Servant
 #endif
 import qualified Miso
 import Miso ( View )
+import Miso.String
 import Miso.Html
 import qualified Miso.String as Miso
 import qualified Network.URI as Network
@@ -92,19 +93,57 @@ flippedView m =
         ]
       , button_ [ onClick $ ChangeURI homeLink ] [ text "Go to /" ]
       ]
+cdnEdge :: MisoString
+cdnEdge = "https://herocdn.sfo2.cdn.digitaloceanspaces.com"
 
 -- View function of the Login route
 loginView :: Model -> View Action
 loginView m =
-    div_ []
-      [ h1_ [] [text "Login!"]
-      , form_ [method_ "post", action_ "/login"]
-        [
-          input_ [type_ "text", name_ "username", placeholder_ "username"]
-          , input_ [type_ "password", name_ "password", placeholder_ "password"]
-          , input_ [type_ "submit", value_ "Login"]
+    body_ [class_ "layout-default"]
+      [ section_ [class_ "hero is-fullheight is-medium is-black is-bold"]
+        [ div_ [class_ "hero-body"]
+          [ div_ [class_ "container"]
+            [ div_ [class_ "column is-6 is-offset-3"]
+              [ div_ [class_ "card-content"]
+                [ div_ [class_ "column is-4 is-offset-4"]
+                  [ figure_ [class_ "image"]
+                    [img_ [src_ $ cdnEdge <> "/assets/images/icons/hero-logo.png"]]
+                    ]
+                , hr_ []
+                , form_  [] [
+                  div_ [class_ "control"]
+                    [ input_ [class_ "input", type_ "email", placeholder_ "Email"]]
+                , div_ [class_ "control"]
+                    [ input_ [class_ "input", type_ "password", placeholder_ "Password"]]
+                , div_ [class_ "columns is-gapless"]
+                    [ div_ [class_ "column control is-half"]
+                      [ div_ [class_ "checkbox", id_ "checkbox"]
+                        [ input_ [type_ "checkbox"]
+                        , label_ [for_ "checkbox"] [text "Remember Me"]
+                        ]
+                      ]
+                  , div_ [class_ "column control is-half"]
+                    [ div_ [class_ "button is-black", id_ "login_button"]
+                      [ text "Login"
+                      ]
+                    ]
+                  ]
+                ]
+                , hr_ []
+                , center_ []
+                  [ p_ []
+                    [ a_ [href_ "/"][text "Forgot your username or password?"]
+                    ]
+                  , p_ []
+                    [ a_ [href_ "/"][text "Don't have an account? Sign Up"]
+                    ]
+                  ]
+              ]
+            ]
+          ]
         ]
       ]
+     ]
 
 page404View :: View Action
 page404View =

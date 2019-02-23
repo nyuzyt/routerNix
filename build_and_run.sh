@@ -2,7 +2,7 @@
 
 # usage: ag -l | entr -r ./build_and_run.sh
 
-nix build
+nix-build
 status=$?
 if test "$status" -eq 0
 then

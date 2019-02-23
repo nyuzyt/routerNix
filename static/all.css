@@ -1,0 +1,87 @@
+@font-face
+{ font-family: 'Eurostile'
+; src: url('https://herocdn.sfo2.cdn.digitaloceanspaces.com/assets/fonts/eurostile/EurostileLTStd-Bold.eot')
+; src:
+      url('https://herocdn.sfo2.cdn.digitaloceanspaces.com/assets/fonts/eurostile/EurostileLTStd-Bold.eot?iefix') format('embedded-opentype'),
+      url('https://herocdn.sfo2.cdn.digitaloceanspaces.com/assets/fonts/eurostile/EurostileLTStd-Bold.woff') format('woff'),
+      url('https://herocdn.sfo2.cdn.digitaloceanspaces.com/assets/fonts/eurostile/EurostileLTStd-Bold.ttf') format('truetype'),
+      url('https://herocdn.sfo2.cdn.digitaloceanspaces.com/assets/fonts/eurostile/EurostileLTStd-Bold.otf') format('opentype'),
+; font-weight: bold
+; font-style: normal
+}
+
+@font-face
+{ font-family: 'Eurostile'
+; src: url('https://herocdn.sfo2.cdn.digitaloceanspaces.com/assets/fonts/eurostile/Eurostile-Reg.otf')
+; font-weight: normal
+; font-style: normal
+}
+
+
+html, body
+{ background: black
+}
+
+.app
+{ display: flex
+; justify-content: center
+; align-items: center
+}
+
+#app-nav, #comic-controls
+{ background: black
+}
+
+#app-nav *,
+#comic-controls *
+{  font-family: 'Eurostile'
+}
+
+.app-nav > .column,
+.comic-controls > .column
+{ text-align: center
+}
+
+.comic-page, .comic-page-full
+{ width:  auto
+; transform: scale(1)
+; margin: 0 .2rem
+}
+
+.comic-page
+{ height: 90vh
+}
+
+.comic-controls
+{ align-self: flex-end
+; justify-content: space-around
+}
+
+.comic-controls-pages
+{ justify-content: center !important
+}
+
+#checkbox {
+      padding-top: 10px;
+      margin-top: 10px;
+      display:inline-block;
+}
+
+#login_button {
+      margin-top: 10px;
+      display:inline-block;
+      float:right;
+      border: 2px solid white;
+}
+
+input {
+      margin-right: 10px;
+      margin-bottom: 10px;
+}
+
+/* Bulma adjustments *********************************************************/
+
+/* Removing vertical padding centers the comic image better. */
+.hero-body
+{ padding: 0 1.5rem !important
+}
